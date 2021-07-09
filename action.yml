@@ -1,0 +1,11 @@
+name: 'Keystone action'
+description: 'Action to use keystone github CI integration.'
+inputs:
+  keystone_slot:  # id of input
+    description: 'What has been sent from push-ci command'
+    required: true
+    default: '{}'
+runs:
+  using: 'node12'
+  main: 'index.js'
+

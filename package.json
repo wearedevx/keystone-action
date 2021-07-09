@@ -1,0 +1,9 @@
+{
+  "name": "",
+  "version": "",
+  "description": "Github action to use keystone secrets",
+  "dependencies": {
+    "@actions/core": "^1.4.0",
+    "@actions/github": "^5.0.0"
+  }
+}
