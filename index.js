@@ -16,10 +16,18 @@ function getOcto() {
     repo,
     owner
   }
+  console.log("LS -> index.js:18 -> octoOptions: ", JSON.stringify(octoOptions, undefined, 2))
   const octo = getOcto();
 
-  const repoSecrets = await octo.rest.actions.listRepoSecrets(octoOptions);
-  console.log("LS -> index.js:21 -> secrets: ", repoSecrets)
+  let repoSecrets = [];
+
+  try {
+    repoSecrets = await octo.rest.actions.listRepoSecrets(octoOptions);
+    console.log("LS -> index.js:21 -> secrets: ", JSON.stringify(repoSecrets, undefined, 3))
+  } catch (err) {
+    core.setFailed(err.message)
+    return
+  }
 
   let files, secrets;
 
