@@ -25,7 +25,7 @@ const github = require('@actions/github');
     fs.writeFileSync(path, content, { mode: 0o644 })
   })
 
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
+  const payload = JSON.stringify(github.context, undefined, 2)
   console.log(`The event payload: ${payload}`);
 })()
 
