@@ -11,10 +11,13 @@ function getOcto() {
   const payload = JSON.stringify(github, undefined, 2)
   console.log(`The event payload: ${payload}`);
   console.log("The action environment:", JSON.stringify(process.env, undefined, 2))
+
   // `who-to-greet` input defined in action metadata file
   const keystone_slot = core.getInput('keystone_slot');
-  const repo = github.context.repo.repo.name;
-  const owner = github.context.repo.owner.name;
+
+  const repo = github.context.payload.repository.name;
+  const owner = github.context.payload.repository.owner.name;
+
   const octoOptions = {
     repo,
     owner
