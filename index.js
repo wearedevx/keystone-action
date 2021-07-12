@@ -3,7 +3,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 function getOcto() {
-  const token = core.getInput('token') ?? process.env.GITHUB_TOKEN;
+  const token = core.getInput('token') || process.env.GITHUB_TOKEN;
   return github.getOctokit(token)
 }
 

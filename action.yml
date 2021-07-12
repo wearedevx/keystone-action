@@ -1,6 +1,10 @@
 name: 'Keystone action'
 description: 'Action to use keystone github CI integration.'
 inputs:
+  token:
+    description: 'Github accest token'
+    required: false,
+    default: '${{ github.token }}'
   keystone_slot:  # id of input
     description: 'What has been sent from push-ci command'
     required: true
