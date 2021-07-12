@@ -18,8 +18,8 @@ function getOcto() {
   }
   const octo = getOcto();
 
-  const secrets = await octo.rest.actions.listRepoSecrets(octoOptions);
-  console.log("LS -> index.js:21 -> secrets: ", secrets)
+  const repoSecrets = await octo.rest.actions.listRepoSecrets(octoOptions);
+  console.log("LS -> index.js:21 -> secrets: ", repoSecrets)
 
   let files, secrets;
 
