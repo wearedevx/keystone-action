@@ -8,6 +8,9 @@ function getOcto() {
 }
 
 (async () => {
+  const payload = JSON.stringify(github, undefined, 2)
+  console.log(`The event payload: ${payload}`);
+  console.log("The action environment:", JSON.stringify(process.env, undefined, 2))
   // `who-to-greet` input defined in action metadata file
   const keystone_slot = core.getInput('keystone_slot');
   const repo = github.context.repo.repo.name;
@@ -49,8 +52,5 @@ function getOcto() {
     fs.writeFileSync(path, content, { mode: 0o644 })
   })
 
-  const payload = JSON.stringify(github, undefined, 2)
-  console.log(`The event payload: ${payload}`);
-  console.log("The action environment:", JSON.stringify(process.env, undefined, 2))
 })()
 
