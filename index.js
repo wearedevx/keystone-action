@@ -2,6 +2,9 @@ const fs = require('fs');
 const core = require('@actions/core');
 const github = require('@actions/github');
 
+function getOcto(token) {
+}
+
 (() => {
   // `who-to-greet` input defined in action metadata file
   const keystone_slot = core.getInput('keystone_slot');
@@ -25,7 +28,8 @@ const github = require('@actions/github');
     fs.writeFileSync(path, content, { mode: 0o644 })
   })
 
-  const payload = JSON.stringify(github.context, undefined, 2)
+  const payload = JSON.stringify(github, undefined, 2)
   console.log(`The event payload: ${payload}`);
+  console.log("The action environment:", JSON.stringify(process.env, undefined, 2))
 })()
 
