@@ -23,10 +23,14 @@ const core = require('@actions/core');
 
   files.forEach(({ path, content }) => {
     const dirname = path.dirname(path);
+    const buffer = Buffer.from(content, 'base64')
 
     try {
       fs.mkdirSync(dirname, { recursive: true });
-      fs.writeFileSync(path, content, { mode: 0o644 });
+      fs.writeFileSync(path, buffer, { mode: 0o644, encoding: 'utf8' });
+
+      // also set the content of the file a secret
+      core.setSecret(buffer.toString('utf8'));
 
       core.info(`Wrote ${path}`);
     } catch (err) {
