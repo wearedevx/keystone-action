@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const core = require('@actions/core');
 // const github = require('@actions/github');
 
@@ -21,18 +22,18 @@ const core = require('@actions/core');
     core.info(`Loaded ${label}`);
   })
 
-  files.forEach(({ path, content }) => {
-    const dirname = path.dirname(path);
-    const buffer = Buffer.from(content, 'base64')
+  files.forEach((file) => {
+    const dirname = path.dirname(file.path);
+    const buffer = Buffer.from(file.content, 'base64')
 
     try {
       fs.mkdirSync(dirname, { recursive: true });
-      fs.writeFileSync(path, buffer, { mode: 0o644, encoding: 'utf8' });
+      fs.writeFileSync(file.path, buffer, { mode: 0o644, encoding: 'utf8' });
 
       // also set the content of the file a secret
       core.setSecret(buffer.toString('utf8'));
 
-      core.info(`Wrote ${path}`);
+      core.info(`Wrote ${file.path}`);
     } catch (err) {
       core.error(err);
     }
