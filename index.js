@@ -19,6 +19,7 @@ const core = require("@actions/core");
   let files, secrets;
 
   try {
+     console.log(keystone_slot)
     const message = JSON.parse(keystone_slot);
     files = message.files;
     secrets = message.secrets;
