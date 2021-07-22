@@ -5,10 +5,26 @@ inputs:
     description: 'Github accest token'
     required: false,
     default: '${{ github.token }}'
-  keystone_slot:  # id of input
+  keystone_slot_1:  # id of input
     description: 'What has been sent from push-ci command'
     required: true
-    default: '{}'
+    default: ''
+  keystone_slot_2:  # id of input
+    description: 'What has been sent from push-ci command'
+    required: true
+    default: ''
+  keystone_slot_3:  # id of input
+    description: 'What has been sent from push-ci command'
+    required: true
+    default: ''
+  keystone_slot_4:  # id of input
+    description: 'What has been sent from push-ci command'
+    required: true
+    default: ''
+  keystone_slot_5:  # id of input
+    description: 'What has been sent from push-ci command'
+    required: true
+    default: ''
 runs:
   using: 'node12'
   main: 'index.js'
