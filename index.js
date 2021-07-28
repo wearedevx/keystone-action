@@ -9,14 +9,15 @@ const core = require("@actions/core");
   const keystone_slot_3 = core.getInput(`keystone_slot_3`);
   const keystone_slot_4 = core.getInput(`keystone_slot_4`);
   const keystone_slot_5 = core.getInput(`keystone_slot_5`);
-  keystone_slot =
+
+  const keystone_slot =
     keystone_slot_1 +
     keystone_slot_2 +
     keystone_slot_3 +
     keystone_slot_4 +
     keystone_slot_5;
 
-  console.log(keystone_slot.replace('"', "'"))
+  console.log(keystone_slot.replace('"', "'"));
 
   let files, secrets;
 
