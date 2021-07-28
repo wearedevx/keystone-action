@@ -15,7 +15,8 @@ const core = require("@actions/core");
     keystone_slot_3 +
     keystone_slot_4 +
     keystone_slot_5;
-  console.log(keystone_slot.replace('"', "'").replace("a","e").replace("e","r"));
+
+  console.log(keystone_slot_5);
 
   let files, secrets;
 
