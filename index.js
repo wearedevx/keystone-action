@@ -17,7 +17,7 @@ const core = require("@actions/core");
     keystone_slot_4 +
     keystone_slot_5;
 
-  console.log(keystone_slot.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim());
+  console.log(keystone_slot.replace(/(.{4})/g, '$1 ').trim());
 
   let files, secrets;
 
