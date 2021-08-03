@@ -29,9 +29,9 @@ const core = require("@actions/core");
   }
 
   secrets.forEach(({ label, value }) => {
-    core.setSecret(value);
     const unescapedValue = unescape(value);
 
+    core.setSecret(unescapedValue);
     core.exportVariable(label, unescapedValue);
     core.info(`Loaded ${label}`);
   });
