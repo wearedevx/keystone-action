@@ -31,10 +31,10 @@ const unescape = require("./unescape");
   }
 
   secrets.forEach(({ label, value }) => {
-    const unescapedValue = unescape(value);
+    // const unescapedValue = unescape(value);
 
-    core.setSecret(unescapedValue);
-    core.exportVariable(label, unescapedValue);
+    core.setSecret(value);
+    core.exportVariable(label, value);
     core.info(`Loaded ${label}`);
   });
 
