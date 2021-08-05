@@ -20,7 +20,9 @@ function isSecretMissing(secretDefininition, secrets) {
   if (secretDefininition.required) {
     const s = secrets.find(({ label }) => label === secretDefininition.key)
 
-    if (s === null || s?.value === "") {
+    if (s === null || s === undefined) {
+      result = true
+    } else if (!s.value) {
       result = true
     }
   }
@@ -34,7 +36,9 @@ function isFileMissing(fileDefinition, files) {
   if (secretDefinition.strict) {
     const s = files.find(({ path }) => path == fileDefinition.path)
 
-    if (s === null || s?.content === "") {
+    if (s === null || s === undefined) {
+      result = true
+    } else if (s.content === "") {
       result = true
     }
   }
