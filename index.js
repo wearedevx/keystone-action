@@ -1,11 +1,58 @@
 const fs = require("fs");
 const path = require("path");
 const core = require("@actions/core");
+
+const yaml = require("yaml");
+
 // const github = require('@actions/github');
 
 const unescape = require("./unescape");
 
-(() => {
+function getKeystoneFile() {
+  const contents = fs.readFileSync(path.join(process.pwd(), "keystone.yml"), "utf-8")
+
+  return yaml.parse(contents)
+}
+
+function isSecretMissing(secretDefininition, secrets) {
+  let result = false 
+
+  if (secretDefininition.required) {
+    const s = secrets.find(({ label }) => label === secretDefininition.key)
+
+    if (s === null || s?.value === "") {
+      result = true
+    }
+  }
+  
+  return result
+}
+
+function isFileMissing(fileDefinition, files) {
+  let result = false
+
+  if (secretDefinition.strict) {
+    const s = files.find(({ path }) => path == fileDefinition.path)
+
+    if (s === null || s?.content === "") {
+      result = true
+    }
+  }
+
+  return result
+}
+
+function missingSecrets(secretDefinitions, secrets) {
+  return secretDefinitions.filter(sd => isSecretMissing(sd, secrets))
+    .map(sd => sd.key)
+}
+
+function missingFiles(fileDefinitions, files) {
+  return fileDefinitions.filter(fd => isFileMissing(fd, files))
+    .map(fd => fd.path)
+}
+
+function decodeKeystoneSlots() {
   const keystone_slot_1 = core.getInput(`keystone_slot_1`);
   const keystone_slot_2 = core.getInput(`keystone_slot_2`);
   const keystone_slot_3 = core.getInput(`keystone_slot_3`);
@@ -26,13 +73,38 @@ const unescape = require("./unescape");
     files = message.files;
     secrets = message.secrets;
   } catch (err) {
-    core.setFailed(err.message);
-    return;
+    return { error: err } 
+   }
+
+  return { files, secrets, error: null }
+}
+
+(() => {
+  let { files, secrets, error } = decodeKeystoneSlots();
+  
+  if (error != null) {
+    core.setFailed(error);
+    return
+  }
+
+  const ksFile = getKeystoneFile();
+  let missing;
+
+  if (missing = missingSecrets(ksFile.secrets, secrets) && missing.length) {
+    const errorMessage = `Some required secrets are missing: ${missing.join(', ')}`; 
+
+    core.setFailed(new Error(errorMessage));
+    return
+  }
+
+  if (missing = missingFiles(ksFile.files, files) && missing.length) {
+    const errorMessage = `Some required files are missing: ${missing.join(', ')}`; 
+
+    core.setFailed(new Error(errorMessage))
+    return
   }
 
   secrets.forEach(({ label, value }) => {
-    // const unescapedValue = unescape(value);
-
     core.setSecret(value);
     core.exportVariable(label, value);
     core.info(`Loaded ${label}`);
