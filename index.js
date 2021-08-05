@@ -5,8 +5,7 @@ const core = require("@actions/core");
 const yaml = require("yaml");
 
 // const github = require('@actions/github');
-
-const unescape = require("./unescape");
+// const unescape = require("./unescape");
 
 function getKeystoneFile() {
   const contents = fs.readFileSync(path.join(process.cwd(), "keystone.yml"), "utf-8")
@@ -94,7 +93,7 @@ function decodeKeystoneSlots() {
   const ksFile = getKeystoneFile();
   let missing;
 
-  if (missing = missingSecrets(ksFile.secrets, secrets) && missing.length) {
+  if (missing = missingSecrets(ksFile.env, secrets) && missing.length) {
     const errorMessage = `Some required secrets are missing: ${missing.join(', ')}`; 
 
     core.setFailed(new Error(errorMessage));
