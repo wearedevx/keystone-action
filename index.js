@@ -9,7 +9,7 @@ const yaml = require("yaml");
 const unescape = require("./unescape");
 
 function getKeystoneFile() {
-  const contents = fs.readFileSync(path.join(process.pwd(), "keystone.yml"), "utf-8")
+  const contents = fs.readFileSync(path.join(process.cwd(), "keystone.yml"), "utf-8")
 
   return yaml.parse(contents)
 }
