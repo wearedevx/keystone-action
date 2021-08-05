@@ -16,7 +16,7 @@ function getKeystoneFile() {
 function isSecretMissing(secretDefininition, secrets) {
   let result = false 
 
-  if (secretDefininition.required) {
+  if (secretDefininition.strict) {
     const s = secrets.find(({ label }) => label === secretDefininition.key)
 
     if (s === null || s === undefined) {
@@ -32,7 +32,7 @@ function isSecretMissing(secretDefininition, secrets) {
 function isFileMissing(fileDefinition, files) {
   let result = false
 
-  if (secretDefinition.strict) {
+  if (fileDefinition.strict) {
     const s = files.find(({ path }) => path == fileDefinition.path)
 
     if (s === null || s === undefined) {
