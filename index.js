@@ -92,15 +92,17 @@ function decodeKeystoneSlots() {
 
   const ksFile = getKeystoneFile();
   let missing;
+  missing = missingSecrets(ksFile.env, secrets)
 
-  if (missing = missingSecrets(ksFile.env, secrets) && missing.length) {
+  if (missing && missing.length) {
     const errorMessage = `Some required secrets are missing: ${missing.join(', ')}`; 
 
     core.setFailed(new Error(errorMessage));
     return
   }
 
-  if (missing = missingFiles(ksFile.files, files) && missing.length) {
+  missing = missingFiles(ksFile.files, files)
+  if (missing && missing.length) {
     const errorMessage = `Some required files are missing: ${missing.join(', ')}`; 
 
     core.setFailed(new Error(errorMessage))
