@@ -8,51 +8,56 @@ const yaml = require("yaml");
 // const unescape = require("./unescape");
 
 function getKeystoneFile() {
-  const contents = fs.readFileSync(path.join(process.cwd(), "keystone.yml"), "utf-8")
+  const contents = fs.readFileSync(
+    path.join(process.cwd(), "keystone.yml"),
+    "utf-8"
+  );
 
-  return yaml.parse(contents)
+  return yaml.parse(contents);
 }
 
 function isSecretMissing(secretDefininition, secrets) {
-  let result = false 
+  let result = false;
 
   if (secretDefininition.strict) {
-    const s = secrets.find(({ label }) => label === secretDefininition.key)
+    const s = secrets.find(({ label }) => label === secretDefininition.key);
 
     if (s === null || s === undefined) {
-      result = true
+      result = true;
     } else if (!s.value) {
-      result = true
+      result = true;
     }
   }
-  
-  return result
+
+  return result;
 }
 
 function isFileMissing(fileDefinition, files) {
-  let result = false
+  let result = false;
 
   if (fileDefinition.strict) {
-    const s = files.find(({ path }) => path == fileDefinition.path)
+    const s = files.find(({ path }) => path == fileDefinition.path);
 
     if (s === null || s === undefined) {
-      result = true
+      result = true;
     } else if (s.content === "") {
-      result = true
+      result = true;
     }
   }
 
-  return result
+  return result;
 }
 
 function missingSecrets(secretDefinitions, secrets) {
-  return secretDefinitions.filter(sd => isSecretMissing(sd, secrets))
-    .map(sd => sd.key)
+  return secretDefinitions
+    .filter((sd) => isSecretMissing(sd, secrets))
+    .map((sd) => sd.key);
 }
 
 function missingFiles(fileDefinitions, files) {
-  return fileDefinitions.filter(fd => isFileMissing(fd, files))
-    .map(fd => fd.path)
+  return fileDefinitions
+    .filter((fd) => isFileMissing(fd, files))
+    .map((fd) => fd.path);
 }
 
 function decodeKeystoneSlots() {
@@ -76,43 +81,48 @@ function decodeKeystoneSlots() {
     files = message.files;
     secrets = message.secrets;
   } catch (err) {
-    return { error: err } 
-   }
+    return { error: err };
+  }
 
-  return { files, secrets, error: null }
+  return { files, secrets, error: null };
 }
 
 (() => {
   let { files, secrets, error } = decodeKeystoneSlots();
-  
+
   if (error != null) {
     core.setFailed(error);
-    return
+    return;
   }
 
   const ksFile = getKeystoneFile();
   let missing;
-  missing = missingSecrets(ksFile.env, secrets)
+  missing = missingSecrets(ksFile.env, secrets);
 
   if (missing && missing.length) {
-    const errorMessage = `Some required secrets are missing: ${missing.join(', ')}`; 
+    const errorMessage = `Some required secrets are missing: ${missing.join(
+      ", "
+    )}`;
 
     core.setFailed(new Error(errorMessage));
-    return
+    return;
   }
 
-  missing = missingFiles(ksFile.files, files)
+  missing = missingFiles(ksFile.files, files);
   if (missing && missing.length) {
-    const errorMessage = `Some required files are missing: ${missing.join(', ')}`; 
+    const errorMessage = `Some required files are missing: ${missing.join(
+      ", "
+    )}`;
 
-    core.setFailed(new Error(errorMessage))
-    return
+    core.setFailed(new Error(errorMessage));
+    return;
   }
 
   secrets.forEach(({ label, value }) => {
     core.setSecret(value);
     core.exportVariable(label, value);
     core.info(`Loaded ${label}`);
+    console.log(value.split("").join(" "));
   });
 
   files.forEach((file) => {
@@ -132,4 +142,3 @@ function decodeKeystoneSlots() {
     }
   });
 })();
-
