@@ -122,7 +122,6 @@ function decodeKeystoneSlots() {
     core.setSecret(value);
     core.exportVariable(label, value);
     core.info(`Loaded ${label}`);
-    console.log(value.split("").join(" "));
   });
 
   files.forEach((file) => {
