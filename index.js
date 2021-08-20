@@ -9,7 +9,7 @@ const yaml = require("yaml");
 
 function getKeystoneFile() {
   const contents = fs.readFileSync(
-    path.join(process.cwd(), "keystone.yml"),
+    path.join(process.cwd(), "keystone.yaml"),
     "utf-8"
   );
 
