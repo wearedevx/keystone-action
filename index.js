@@ -3,10 +3,30 @@ const path = require("path");
 const core = require("@actions/core");
 
 const yaml = require("yaml");
+const gignore = require("./gitignore");
 
-// const github = require('@actions/github');
-// const unescape = require("./unescape");
+require("keystone-file.js")
+/**
+  * @typedef {import("./keystone-file.js").KeystoneFile} KeystoneFile
+  * @typedef {import("./keystone-file.js").EnvKey} EnvKey
+  * @typedef {import("./keystone-file.js").FileKey} FileKey
+  */
 
+/**
+  * @typedef {Object} Secret
+  * @property {string} label
+  * @property {string} value
+  */
+
+/**
+  * @typedef {Object} File
+  * @property {string} path
+  * @property {string} content
+  */
+
+/**
+  * @returns {KeystoneFile}
+  */
 function getKeystoneFile() {
   const contents = fs.readFileSync(
     path.join(process.cwd(), "keystone.yaml"),
@@ -16,6 +36,12 @@ function getKeystoneFile() {
   return yaml.parse(contents);
 }
 
+/**
+  * @param {EnvKey} secretDefininition
+  * @param {Secret[]} secrets
+  * 
+  * @returns {bool}
+  */
 function isSecretMissing(secretDefininition, secrets) {
   let result = false;
 
@@ -32,6 +58,12 @@ function isSecretMissing(secretDefininition, secrets) {
   return result;
 }
 
+/**
+  * @param {FileKey} fileDefinition
+  * @param {File[]} files
+  *
+  * @returns {bool}
+  */
 function isFileMissing(fileDefinition, files) {
   let result = false;
 
@@ -48,18 +80,33 @@ function isFileMissing(fileDefinition, files) {
   return result;
 }
 
+/**
+  * @param {EnvKey[]} secretDefinitions
+  * @param {Secret[]} secrets
+  *
+  * @returns {string[]}
+  */
 function missingSecrets(secretDefinitions, secrets) {
   return secretDefinitions
     .filter((sd) => isSecretMissing(sd, secrets))
     .map((sd) => sd.key);
 }
 
+/**
+  * @param {FileKey[]} fileDefinitions
+  * @param {File[]} files
+  *
+  * @returns {string[]}
+  */
 function missingFiles(fileDefinitions, files) {
   return fileDefinitions
     .filter((fd) => isFileMissing(fd, files))
     .map((fd) => fd.path);
 }
 
+/**
+  * @returns {files: File[], secrets: Secret[], error: Error | null}
+  */
 function decodeKeystoneSlots() {
   const keystone_slot_1 = core.getInput(`keystone_slot_1`);
   const keystone_slot_2 = core.getInput(`keystone_slot_2`);
@@ -87,7 +134,10 @@ function decodeKeystoneSlots() {
   return { files, secrets, error: null };
 }
 
-(() => {
+// Main 
+(async () => {
+  await gitignore.load();
+
   let { files, secrets, error } = decodeKeystoneSlots();
 
   if (error != null) {
@@ -118,13 +168,17 @@ function decodeKeystoneSlots() {
     return;
   }
 
-  secrets.forEach(({ label, value }) => {
+  ksFile.secrets.forEach(({ name }) => {
+    const { label, value } = secrets.find(s => s.label === name); 
+
     core.setSecret(value);
     core.exportVariable(label, value);
     core.info(`Loaded ${label}`);
   });
 
-  files.forEach((file) => {
+  for (let fd of ksFile.files) {
+    const file = files.find(f => f.path === fd.path);
+
     const dirname = path.dirname(file.path);
     const buffer = Buffer.from(file.content, "base64");
 
@@ -135,9 +189,14 @@ function decodeKeystoneSlots() {
       // also set the content of the file a secret
       core.setSecret(buffer.toString("utf8"));
 
+      // add to gitignore file if not in there
+      await gignore.add(file.path);
+
       core.info(`Wrote ${file.path}`);
     } catch (err) {
       core.error(err);
     }
-  });
+  }
+
+  await gignore.end();
 })();
