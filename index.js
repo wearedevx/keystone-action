@@ -32,7 +32,13 @@ function getKeystoneFile() {
     "utf-8"
   );
 
-  return yaml.parse(contents);
+  const result = yaml.parse(contents);
+
+  return {
+    env: [],
+    files: [],
+    ...result,
+  };
 }
 
 /**
@@ -167,7 +173,7 @@ function decodeKeystoneSlots() {
     return;
   }
 
-  ksFile.secrets.forEach(({ name }) => {
+  ksFile.env.forEach(({ name }) => {
     const { label, value } = secrets.find((s) => s.label === name);
 
     core.setSecret(value);
