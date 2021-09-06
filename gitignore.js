@@ -1,69 +1,87 @@
-const fs = require('fs');
-const fsp = require('fs/promises');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-
-const gitignorePath = path.join(process.cwd(), '.gitignore');
+const gitignorePath = path.join(process.cwd(), ".gitignore");
 
 let gitIgnorelines = [];
 
 /**
-  * Returns true if `filepath` appears in .gitignore
-  * @param {string} filepath
-  * @returns {boolean}
-  */
+ * Returns true if `filepath` appears in .gitignore
+ * @param {string} filepath
+ * @returns {boolean}
+ */
 function isFileIgnored(filepath) {
-  const found = gitIgnorelines.find(line => filepath !== line)
+  const found = gitIgnorelines.find((line) => filepath !== line);
 
-  return !!found
+  return !!found;
 }
 
 /**
-  * Appends `filepath` to .gitignore
-  * @param {string} filepath
-  * @returns {Promise}
-  */
+ * Appends `filepath` to .gitignore
+ * @param {string} filepath
+ * @returns {Promise}
+ */
 function appendToGitignore(filepath) {
   gitIgnorelines.push(filepath);
 
-  return fsp.writeFile(gitignorePath, filepath + '\n', {encoding: 'utf8', flag:'a'});
+  return new Promise((resolve, reject) => {
+    fs.writeFile(
+      gitignorePath,
+      filepath + "\n",
+      {
+        encoding: "utf8",
+        flag: "a",
+      },
+      (err) => {
+        if (err) reject(err);
+        else resolve(err);
+      }
+    );
+  });
 }
 
 /**
-  * Loads all .gitignore lines in a module variable
-  */
+ * Loads all .gitignore lines in a module variable
+ * @returns {Promise}
+ */
 async function loadGitIgnore() {
-  const r = await fsp.readFile(gitignorePath, { encoding: 'utf8' });
+  const promise = new Promise((resolve, reject) => {
+    fs.readFile(gitignorePath, { encoding: "utf8" }, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
 
-  gitIgnorelines = r.
-    split('\n').
-    filter(line => line !== '');
+  const data = await promise;
+  gitIgnorelines = data.split("\n").filter((line) => line !== "");
 }
 
 /**
-  * Initializes the module’s varibles
-  */
+ * Initializes the module’s varibles
+ */
 module.exports.init = async function init() {
-  await loadGitIgnore()
-}
+  await loadGitIgnore();
+};
 
 /**
-  * If `filepath` is not in the .gitignore file,
-  * append it
-  */
+ * If `filepath` is not in the .gitignore file,
+ * append it
+ */
 module.exports.add = async function add(filepath) {
   if (isFileIgnored(filepath)) {
     await appendToGitignore(filepath);
   }
-}
+};
 
 /**
-  * Writes the .gitignore file and close
-  * allocated resources
-  */
+ * Writes the .gitignore file and close
+ * allocated resources
+ */
 module.exports.end = function () {
   return new Promise((resolve, reject) => {
-    resolve()
-  })
-}
-
+    resolve();
+  });
+};
