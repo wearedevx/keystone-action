@@ -174,7 +174,10 @@ function decodeKeystoneSlots() {
   }
 
   ksFile.env.forEach(({ name }) => {
-    const { label, value } = secrets.find((s) => s.label === name);
+    const found = secrets.find((s) => s.label === name);
+    if (!found) return;
+
+    const { label, value } = found;
 
     core.setSecret(value);
     core.exportVariable(label, value);
