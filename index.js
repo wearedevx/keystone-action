@@ -173,8 +173,9 @@ function decodeKeystoneSlots() {
     return;
   }
 
-  ksFile.env.forEach(({ name }) => {
-    const found = secrets.find((s) => s.label === name);
+  ksFile.env.forEach(({ key }) => {
+    console.log("LS -> index.js:176 -> key: ", key);
+    const found = secrets.find((s) => s.label === key);
     if (!found) return;
 
     const { label, value } = found;
