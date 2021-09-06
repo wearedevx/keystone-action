@@ -5,8 +5,6 @@ const core = require("@actions/core");
 const yaml = require("yaml");
 const gignore = require("./gitignore");
 
-require("keystone-file.js");
-
 /**
  * @typedef {import("./keystone-file.js").KeystoneFile} KeystoneFile
  * @typedef {import("./keystone-file.js").EnvKey} EnvKey
