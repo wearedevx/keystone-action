@@ -3,7 +3,7 @@ const path = require("path");
 const core = require("@actions/core");
 
 const yaml = require("yaml");
-const gignore = require("./gitignore");
+const gitignore = require("./gitignore");
 
 /**
  * @typedef {import("./keystone-file.js").KeystoneFile} KeystoneFile
@@ -189,7 +189,7 @@ function decodeKeystoneSlots() {
       core.setSecret(buffer.toString("utf8"));
 
       // add to gitignore file if not in there
-      await gignore.add(file.path);
+      await gitignore.add(file.path);
 
       core.info(`Wrote ${file.path}`);
     } catch (err) {
@@ -197,5 +197,5 @@ function decodeKeystoneSlots() {
     }
   }
 
-  await gignore.end();
+  await gitignore.end();
 })();
