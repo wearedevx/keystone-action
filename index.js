@@ -135,7 +135,7 @@ function decodeKeystoneSlots() {
 
 // Main
 (async () => {
-  await gitignore.load();
+  await gitignore.init();
 
   let { files, secrets, error } = decodeKeystoneSlots();
 
