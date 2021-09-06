@@ -5,28 +5,29 @@ const core = require("@actions/core");
 const yaml = require("yaml");
 const gignore = require("./gitignore");
 
-require("keystone-file.js")
-/**
-  * @typedef {import("./keystone-file.js").KeystoneFile} KeystoneFile
-  * @typedef {import("./keystone-file.js").EnvKey} EnvKey
-  * @typedef {import("./keystone-file.js").FileKey} FileKey
-  */
+require("keystone-file.js");
 
 /**
-  * @typedef {Object} Secret
-  * @property {string} label
-  * @property {string} value
-  */
+ * @typedef {import("./keystone-file.js").KeystoneFile} KeystoneFile
+ * @typedef {import("./keystone-file.js").EnvKey} EnvKey
+ * @typedef {import("./keystone-file.js").FileKey} FileKey
+ */
 
 /**
-  * @typedef {Object} File
-  * @property {string} path
-  * @property {string} content
-  */
+ * @typedef {Object} Secret
+ * @property {string} label
+ * @property {string} value
+ */
 
 /**
-  * @returns {KeystoneFile}
-  */
+ * @typedef {Object} File
+ * @property {string} path
+ * @property {string} content
+ */
+
+/**
+ * @returns {KeystoneFile}
+ */
 function getKeystoneFile() {
   const contents = fs.readFileSync(
     path.join(process.cwd(), "keystone.yaml"),
@@ -37,11 +38,11 @@ function getKeystoneFile() {
 }
 
 /**
-  * @param {EnvKey} secretDefininition
-  * @param {Secret[]} secrets
-  * 
-  * @returns {bool}
-  */
+ * @param {EnvKey} secretDefininition
+ * @param {Secret[]} secrets
+ *
+ * @returns {bool}
+ */
 function isSecretMissing(secretDefininition, secrets) {
   let result = false;
 
@@ -59,11 +60,11 @@ function isSecretMissing(secretDefininition, secrets) {
 }
 
 /**
-  * @param {FileKey} fileDefinition
-  * @param {File[]} files
-  *
-  * @returns {bool}
-  */
+ * @param {FileKey} fileDefinition
+ * @param {File[]} files
+ *
+ * @returns {bool}
+ */
 function isFileMissing(fileDefinition, files) {
   let result = false;
 
@@ -81,11 +82,11 @@ function isFileMissing(fileDefinition, files) {
 }
 
 /**
-  * @param {EnvKey[]} secretDefinitions
-  * @param {Secret[]} secrets
-  *
-  * @returns {string[]}
-  */
+ * @param {EnvKey[]} secretDefinitions
+ * @param {Secret[]} secrets
+ *
+ * @returns {string[]}
+ */
 function missingSecrets(secretDefinitions, secrets) {
   return secretDefinitions
     .filter((sd) => isSecretMissing(sd, secrets))
@@ -93,11 +94,11 @@ function missingSecrets(secretDefinitions, secrets) {
 }
 
 /**
-  * @param {FileKey[]} fileDefinitions
-  * @param {File[]} files
-  *
-  * @returns {string[]}
-  */
+ * @param {FileKey[]} fileDefinitions
+ * @param {File[]} files
+ *
+ * @returns {string[]}
+ */
 function missingFiles(fileDefinitions, files) {
   return fileDefinitions
     .filter((fd) => isFileMissing(fd, files))
@@ -105,8 +106,8 @@ function missingFiles(fileDefinitions, files) {
 }
 
 /**
-  * @returns {files: File[], secrets: Secret[], error: Error | null}
-  */
+ * @returns {files: File[], secrets: Secret[], error: Error | null}
+ */
 function decodeKeystoneSlots() {
   const keystone_slot_1 = core.getInput(`keystone_slot_1`);
   const keystone_slot_2 = core.getInput(`keystone_slot_2`);
@@ -134,7 +135,7 @@ function decodeKeystoneSlots() {
   return { files, secrets, error: null };
 }
 
-// Main 
+// Main
 (async () => {
   await gitignore.load();
 
@@ -169,7 +170,7 @@ function decodeKeystoneSlots() {
   }
 
   ksFile.secrets.forEach(({ name }) => {
-    const { label, value } = secrets.find(s => s.label === name); 
+    const { label, value } = secrets.find((s) => s.label === name);
 
     core.setSecret(value);
     core.exportVariable(label, value);
@@ -177,7 +178,7 @@ function decodeKeystoneSlots() {
   });
 
   for (let fd of ksFile.files) {
-    const file = files.find(f => f.path === fd.path);
+    const file = files.find((f) => f.path === fd.path);
 
     const dirname = path.dirname(file.path);
     const buffer = Buffer.from(file.content, "base64");
