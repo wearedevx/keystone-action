@@ -16,7 +16,7 @@ const gitignore = require("./gitignore");
 function decodeInputs() {
   const filesRaw = core.getInput("files");
 
-  const files = filesRaw.split(",").map((v) => {
+  const files = filesRaw.split("\n").map((v) => {
     const [path, base64content] = v.split("#");
     const content = Buffer.from(base64content, "base64");
 

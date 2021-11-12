@@ -6,7 +6,7 @@ inputs:
     required: false
     default: '${{ github.token }}'
   files:
-    description: 'Comma separated list of files secrets'
+    description: 'Line feed separated list of files secrets'
     required: true
 runs:
   using: 'node12'
