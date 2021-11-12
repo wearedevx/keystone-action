@@ -3,28 +3,11 @@ description: 'Action to use keystone github CI integration.'
 inputs:
   token:
     description: 'Github accest token'
-    required: false,
+    required: false
     default: '${{ github.token }}'
-  keystone_slot_1:  # id of input
-    description: 'What has been sent from push-ci command'
+  files:
+    description: 'Comma separated list of files secrets'
     required: true
-    default: ''
-  keystone_slot_2:  # id of input
-    description: 'What has been sent from push-ci command'
-    required: true
-    default: ''
-  keystone_slot_3:  # id of input
-    description: 'What has been sent from push-ci command'
-    required: true
-    default: ''
-  keystone_slot_4:  # id of input
-    description: 'What has been sent from push-ci command'
-    required: true
-    default: ''
-  keystone_slot_5:  # id of input
-    description: 'What has been sent from push-ci command'
-    required: true
-    default: ''
 runs:
   using: 'node12'
   main: 'index.js'
